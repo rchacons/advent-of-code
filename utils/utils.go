@@ -49,3 +49,36 @@ func FileToLists(filePath string) ([]int, []int, error) {
 	return list1, list2, nil
 
 }
+
+// FileTOReportsLists reads a file and returns a list of reports (each report is a list of integers)
+func FileToReportsLists(filePath string) ([][]int, error) {
+	
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	
+	var reports [][]int
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var report []int
+		line := scanner.Text()
+		parts := strings.Fields(line)
+		
+		for i := range parts {
+			num, err := strconv.Atoi(parts[i])
+			if err != nil {
+				return nil, err
+			}
+			report = append(report, num)
+		}
+		reports = append(reports, report)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return reports, nil
+}
