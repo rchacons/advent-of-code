@@ -82,3 +82,25 @@ func FileToReportsLists(filePath string) ([][]int, error) {
 
 	return reports, nil
 }
+
+// FileToText reads a file and returns its content as a string
+func FileToText(filePath string) (string, error) {
+	
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	var text string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		text += scanner.Text()
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	return text, nil
+}
