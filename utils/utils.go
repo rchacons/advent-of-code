@@ -104,3 +104,32 @@ func FileToText(filePath string) (string, error) {
 
 	return text, nil
 }
+
+// FileToStringMatrix reads a file and returns a matrix of strings 
+func FileToStringMatrix(filePath string) ([][]string, error) {
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	
+	var matrix [][]string
+	scanner := bufio.NewScanner(file)
+	row := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		matrix = append(matrix, []string{})
+		for i := range line {
+			matrix[row] = append(matrix[row], string(line[i]))
+		}
+		row++
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return matrix, nil
+}
+
