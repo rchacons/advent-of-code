@@ -6,6 +6,8 @@ import (
     "os"
     "strconv"
     "strings"
+	"regexp"
+	"log"
 )
 
 func PrintHello() {
@@ -105,6 +107,28 @@ func FileToText(filePath string) (string, error) {
 	return text, nil
 }
 
+// FileToText reads a file and returns its content as a string
+func FileToTextWithSpaces(filePath string) (string, error) {
+	
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	var text string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		text += scanner.Text() + "\n"
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	return text, nil
+}
+
 // FileToStringMatrix reads a file and returns a matrix of strings 
 func FileToStringMatrix(filePath string) ([][]string, error) {
 
@@ -133,3 +157,53 @@ func FileToStringMatrix(filePath string) ([][]string, error) {
 	return matrix, nil
 }
 
+// TextToRules reads an input text and return the rule ([3 5], [1 4] for example) for day 5 puzzle
+func TextToRules(text string) [][]int{
+	pattern1 := regexp.MustCompile(`\d{1,2}\|\d{1,2}`)
+	pattern2 := regexp.MustCompile(`\d{1,2}`)
+	lines := pattern1.FindAllString(text, -1)
+
+	var numbers [][]int
+	for _, line := range lines {
+		numbersString := pattern2.FindAllString(line, -1)
+		number1,err1 := strconv.Atoi(numbersString[0])
+		number2,err2 := strconv.Atoi(numbersString[1])
+		if err1 != nil {
+			log.Fatal(err1)
+		}
+		if err2 != nil {
+			log.Fatal(err1)
+		}
+		numbers = append(numbers, []int{number1,number2})
+	}
+
+	return numbers
+}
+
+// TextToListOfNumbers reads an input text and returns a list of numbers separated by commas
+func TextToListOfNumbers(text string) [][]int{
+	patternNotToMatch := regexp.MustCompile(`\d{1,2}\|\d{1,2}`)
+	patternComma := regexp.MustCompile(`\d+`)
+	lines := strings.Split(text, "\n")
+
+	var numbers [][]int
+	for _, line := range lines {
+		
+		if line != "" && 
+		!patternNotToMatch.MatchString(line) {
+			numberString := patternComma.FindAllString(line, -1)
+
+			var lineNumbers []int
+			for _, numStr := range numberString {
+				number, err := strconv.Atoi(numStr)		
+				if err != nil {
+					log.Fatal(err)
+				}
+				lineNumbers = append(lineNumbers, number)
+			}
+			numbers = append(numbers, lineNumbers)
+		}
+		
+	}
+	return numbers
+}
