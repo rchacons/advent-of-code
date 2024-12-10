@@ -23,7 +23,7 @@ type Position struct {
 }
 
 func main() {
-	log.Println("%d days to XMASSS", 24-6)
+	log.Printf("%v days to XMASSS", 24-6)
 
 	input, err := utils.FileToStringMatrix("../input.txt")
 	// input_test -> expected 6

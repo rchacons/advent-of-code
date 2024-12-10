@@ -207,3 +207,36 @@ func TextToListOfNumbers(text string) [][]int{
 	}
 	return numbers
 }
+
+func FileToIntegerLists(filePath string) ([][]int, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	
+	var numberList [][]int
+	patternNumber := regexp.MustCompile(`\d+`)
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var numbers []int
+		line := scanner.Text()
+		numberString := patternNumber.FindAllString(line, -1)
+
+		for i := range numberString {
+			num, err := strconv.Atoi(numberString[i])
+			if err != nil {
+				return nil, err
+			}
+			numbers = append(numbers, num)
+		}
+		numberList = append(numberList, numbers)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return numberList, nil
+}
