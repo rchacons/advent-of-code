@@ -240,3 +240,23 @@ func FileToIntegerLists(filePath string) ([][]int, error) {
 
 	return numberList, nil
 }
+
+func FileToIntList(filePath string) ([]int, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()	
+	scanner := bufio.NewScanner(file)
+	var numbers []int
+	for scanner.Scan() {
+	
+		line := scanner.Text()
+	
+		for i := range line {	
+			num := int(line[i]-'0')
+			numbers = append(numbers, num)
+		}
+	}
+	return numbers, nil
+}
