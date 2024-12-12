@@ -225,6 +225,7 @@ func FileToIntegerLists(filePath string) ([][]int, error) {
 		numberString := patternNumber.FindAllString(line, -1)
 
 		for i := range numberString {
+			fmt.Println(numberString[i])
 			num, err := strconv.Atoi(numberString[i])
 			if err != nil {
 				return nil, err
@@ -259,4 +260,26 @@ func FileToIntList(filePath string) ([]int, error) {
 		}
 	}
 	return numbers, nil
+}
+
+func FileToIntMatrix(filePath string) ([][]int, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()	
+	scanner := bufio.NewScanner(file)
+	var numberMatrix [][]int
+	for scanner.Scan() {
+		var numbers []int
+
+		line := scanner.Text()
+	
+		for i := range line {	
+			num := int(line[i]-'0')
+			numbers = append(numbers, num)
+		}
+		numberMatrix = append(numberMatrix, numbers)
+	}
+	return numberMatrix, nil
 }
