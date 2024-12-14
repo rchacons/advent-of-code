@@ -283,3 +283,61 @@ func FileToIntMatrix(filePath string) ([][]int, error) {
 	}
 	return numberMatrix, nil
 }
+
+func FileToEquations(filePath string) (map [int][][]int, error){
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	scanner := bufio.NewScanner(file)
+	/**
+	The idea is to return a map where every value is a system of two equations + values of X and Y
+	For ex : 
+	Given the input : 
+	Button A: X+94, Y+34
+	Button B: X+22, Y+67
+	Prize: X=8400, Y=5400
+
+	The result would be:
+	{1 = [[94 34], [22, 67] [8400,5400]]}
+	**/
+	equationMap := make(map[int][][]int)
+	count := 0 // keep track of each line
+	equationSysCount := 1
+	
+	var numberList [][]int
+	patternNumber := regexp.MustCompile(`\d+`)
+
+	for scanner.Scan() {
+		if count == 3 {
+			equationMap[equationSysCount] = numberList
+			numberList = make([][]int, 0)
+			equationSysCount++
+			count = 0
+		}
+		var numbers []int
+		line := scanner.Text()
+		numberString := patternNumber.FindAllString(line, -1)
+		if numberString != nil {
+
+			for i := range numberString {
+				num, err := strconv.Atoi(numberString[i])
+				if err != nil {
+					return nil, err
+				}
+				numbers = append(numbers, num)
+			}
+			numberList = append(numberList, numbers)
+			count++
+		}
+	}
+	equationMap[equationSysCount] = numberList // The last one
+
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return equationMap, nil
+	
+}
