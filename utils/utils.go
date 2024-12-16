@@ -375,3 +375,52 @@ func FileToIntegerListsWithNegatives(filePath string) ([][]int, error) {
 
 	return numberList, nil
 }
+
+// For day 15
+func FileToMapAndRobotMouvements(filePath string) ([][]string, []string, error){
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, nil, err
+	}
+	
+	var puzzleMap [][]string
+	var mouvements []string
+	
+	pattern1 := regexp.MustCompile(`([\s\S]+?)\n\n`)
+	pattern2 := regexp.MustCompile(`\n\n([\s\S]+)`)
+
+	fileStr := string(file)
+
+	match1 := pattern1.FindAllString(fileStr, -1)
+	match2 := pattern2.FindAllString(fileStr, -1)
+
+	lines1 := strings.Split(match1[0], "\n")
+	for lineIndex := range lines1 {
+		line := make([]string, 0)
+		for letterIndex := range lines1[lineIndex]{
+			line = append(line, string(lines1[lineIndex][letterIndex]))
+		}
+		if len(line) > 1 {
+			puzzleMap = append(puzzleMap, line)	
+		}
+	}
+
+	for strIndex := range match2[0] {
+		if match2[0][strIndex] != 10 {
+			mouvements = append(mouvements, string(match2[0][strIndex]))
+		}
+	}
+
+	return puzzleMap, mouvements, nil
+}
+
+
+// for debugging
+func PrintStringMatrix(stringMatrix [][]string) {
+	for _, row := range stringMatrix {
+		for _, val := range row {
+			fmt.Printf("%s ", val)
+		}
+		fmt.Println()
+	}
+}
