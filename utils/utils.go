@@ -426,3 +426,44 @@ func PrintStringMatrix(stringMatrix [][]string) {
 		fmt.Println()
 	}
 }
+
+// For day 17
+func FileToProgramInstructions(filePath string) (map[string]interface{}, error){
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	fileStr := string(file)
+	
+	patternNumber := regexp.MustCompile(`(\d+)`)
+	match := patternNumber.FindAllString(fileStr, -1)
+
+	programMap := make(map[string]interface{})
+
+	programMap["A"],err = strconv.Atoi(match[0])
+	if err != nil { return nil, err }
+	
+	programMap["B"],err = strconv.Atoi(match[1])
+	if err != nil { return nil, err }
+
+	programMap["C"],err = strconv.Atoi(match[2])
+	if err != nil { return nil, err }
+	
+	var numbers []int
+	for i:=3; i < len(match); i++ {
+		//fmt.Println(numberString[i])
+		num, err := strconv.Atoi(match[i])
+		if err != nil {
+			return nil, err
+		}
+		
+		numbers = append(numbers, num)
+	}
+	programMap["P"] = numbers
+	
+
+
+	return programMap, nil
+
+}
