@@ -467,3 +467,27 @@ func FileToProgramInstructions(filePath string) (map[string]interface{}, error){
 	return programMap, nil
 
 }
+
+
+// TextToBytePosition reads an input text and return the position of bytes ([3 5], [1 4] for example) for day 18 puzzle
+func TextToBytePosition(text string) [][]int{
+	pattern1 := regexp.MustCompile(`\d{1,2}\,\d{1,2}`)
+	pattern2 := regexp.MustCompile(`\d{1,2}`)
+	lines := pattern1.FindAllString(text, -1)
+
+	var numbers [][]int
+	for _, line := range lines {
+		numbersString := pattern2.FindAllString(line, -1)
+		number1,err1 := strconv.Atoi(numbersString[0])
+		number2,err2 := strconv.Atoi(numbersString[1])
+		if err1 != nil {
+			log.Fatal(err1)
+		}
+		if err2 != nil {
+			log.Fatal(err1)
+		}
+		numbers = append(numbers, []int{number1,number2})
+	}
+
+	return numbers
+}
