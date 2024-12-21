@@ -19,7 +19,7 @@ type Node struct {
 }
 
 func main() {
-	log.Printf("%v days to XMASSS", 24-18)
+	log.Printf("%v days to XMASSS", 24-20)
 	input, err := utils.FileToTextWithSpaces("input.txt")
 
 	if err != nil {
