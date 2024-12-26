@@ -521,3 +521,24 @@ func FileToPatternSlices(filePath string) ([]string, []string, error) {
 
 	return patternList, wordList, nil
 }
+
+func FileToStringList(filePath string) ([]string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var stringList []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		stringList = append(stringList, line)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return stringList, nil
+}
