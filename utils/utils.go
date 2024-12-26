@@ -225,7 +225,7 @@ func FileToIntegerLists(filePath string) ([][]int, error) {
 		numberString := patternNumber.FindAllString(line, -1)
 
 		for i := range numberString {
-			fmt.Println(numberString[i])
+			// fmt.Println(numberString[i])
 			num, err := strconv.Atoi(numberString[i])
 			if err != nil {
 				return nil, err
@@ -541,4 +541,36 @@ func FileToStringList(filePath string) ([]string, error) {
 	}
 
 	return stringList, nil
+}
+
+func FileToIntegerList(filePath string) ([]int, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	patternNumber := regexp.MustCompile(`\d+`)
+
+	scanner := bufio.NewScanner(file)
+	var numbers []int
+	for scanner.Scan() {
+		line := scanner.Text()
+		numberString := patternNumber.FindAllString(line, -1)
+
+		for i := range numberString {
+			// fmt.Println(numberString[i])
+			num, err := strconv.Atoi(numberString[i])
+			if err != nil {
+				return nil, err
+			}
+			numbers = append(numbers, num)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return numbers, nil
 }
