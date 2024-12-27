@@ -610,3 +610,51 @@ func FileToLanMap(filePath string) (map[string]map[string]bool, error) {
 
 	return pairs, nil
 }
+
+// first get the first part by splitting the (": ")
+// so store x,y in a map {x: y}
+// then get the second part by rpelacing (" -> ") with ("") and then splitting
+// and store the x, op, y, z in a map where {z: {x, op, y}}
+func FileToFormulasMaps(filePath string) (map[string]int, map[string][]string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer file.Close()
+
+    formulas := make(map[string]int)
+    operations := make(map[string][]string)
+    scanner := bufio.NewScanner(file)
+    parsingFormulas := true
+
+    for scanner.Scan() {
+        line := scanner.Text()
+        if line == "" {
+            parsingFormulas = false
+            continue
+        }
+
+        if parsingFormulas {
+            parts := strings.Split(line, ": ")
+            if len(parts) == 2 {
+                value, err := strconv.Atoi(parts[1])
+                if err != nil {
+                    return nil, nil, err
+                }
+                formulas[parts[0]] = value
+            }
+        } else {
+            replacedLine := strings.Replace(line, " -> ", " ", 1)
+			parts := strings.Split(replacedLine, " ")
+            if len(parts) == 4 {
+                operations[parts[3]] = []string{parts[0], parts[1], parts[2]}
+            }
+        }
+    }
+
+    if err := scanner.Err(); err != nil {
+        return nil, nil, err
+    }
+
+    return formulas, operations, nil
+}
