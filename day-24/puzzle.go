@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	log.Printf("%v days to XMASSS", 24-6)
+	log.Printf("XMAS is over but we still have some work to do...")
 
 	wiresMap, gatesAndWiresMap, err := utils.FileToFormulasMaps("input.txt")
 

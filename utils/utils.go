@@ -658,3 +658,76 @@ func FileToFormulasMaps(filePath string) (map[string]int, map[string][]string, e
 
     return formulas, operations, nil
 }
+
+// For day 25
+func FileToMapOfLocksAndKeysMatrix(filePath string) (map[string][][][]string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+
+	var matrixList [][][]string
+	var matrix [][]string
+	scanner := bufio.NewScanner(file)
+	row := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "" {
+			matrixList = append(matrixList, matrix)
+			matrix = make([][]string, 0)
+			row = 0
+		} else {
+			matrix = append(matrix, []string{})
+			for i := range line {
+				matrix[row] = append(matrix[row], string(line[i]))
+			}
+			row++
+		}
+	}
+
+	// Append the last matrix if the file doesn't end with an empty line
+	if len(matrix) > 0 {
+		matrixList = append(matrixList, matrix)
+	}
+	
+	matrixMap := make(map[string][][][]string)
+
+	for _, matrix := range matrixList {
+		count := 0
+		for _, col := range matrix[0] {
+			if col == "#" {count++}
+		}
+		if count == 5 { 
+			// found a lock
+			// add it to the list of matrix for the lock or create one if it does not exist
+			matrixMap["lock"] = append(matrixMap["lock"], matrix)
+		} else {
+			// found a key
+			// add it to the list of matrix for the key or create one if it does not exist
+			matrixMap["key"] = append(matrixMap["key"], matrix)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return matrixMap, nil
+}
+
+
+// PrettyPrintMap prints the map[string][][][]string in a readable format
+func PrettyPrintMap(data map[string][][][]string) {
+    for key, matrices := range data {
+        fmt.Printf("Key: %s\n", key)
+        for i, matrix := range matrices {
+            fmt.Printf(" Matrix %d:\n", i+1)
+            for _, row := range matrix {
+                fmt.Println(strings.Join(row, ""))
+            }
+            fmt.Println()
+        }
+    }
+}
