@@ -574,3 +574,39 @@ func FileToIntegerList(filePath string) ([]int, error) {
 
 	return numbers, nil
 }
+
+// Function to read a pair of string of this format kh-tc and return a map with all neighbors
+func FileToLanMap(filePath string) (map[string]map[string]bool, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	pairs := make(map[string]map[string]bool)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.Split(line, "-")
+		if len(parts) == 2 {
+			tmpMap1, exists1 := pairs[parts[0]]
+			if !exists1 {
+				tmpMap1 = make(map[string]bool)
+			}
+			tmpMap1[parts[1]] = true
+			pairs[parts[0]] = tmpMap1
+
+			tmpMap2, exists2 := pairs[parts[1]]
+			if !exists2 {
+				tmpMap2 = make(map[string]bool)
+			}
+			tmpMap2[parts[0]] = true
+			pairs[parts[1]] = tmpMap2
+		}
+	}
+	if err := scanner.Err(); err != nil {
+        return nil, err
+    }
+
+	return pairs, nil
+}
